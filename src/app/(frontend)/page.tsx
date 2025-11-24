@@ -2,6 +2,7 @@ import Image from 'next/image'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import './styles.css'
+import type { Add } from '@/payload-types';
 
 
 function isAdd(add: unknown): add is Add {
@@ -29,20 +30,25 @@ export default async function HomePage() {
                 }}        
         >        
           {
-            adds
-              .filter(isAdd)
-              .map(add => (
+            adds.map(add => (
+              typeof add !== "object" || add === null ? null : (
                 <a
                   href="test.html"
                   key={add.id}
                   style={{
-                    backgroundImage: add.photo?.url ? `url(${add.photo.url})` : "",
+                    backgroundImage:
+                      typeof add.photo === "object" &&
+                      add.photo !== null &&
+                      "url" in add.photo
+                        ? `url(${add.photo.url})`
+                        : "",
                   }}
                 >
                   <h1>{add.title}</h1>
                   <h2>Kun kr. {add.price}</h2>
                 </a>
-              ))
+              )
+            ))
           }
         </div>
       </section>
