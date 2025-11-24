@@ -3,6 +3,11 @@ import { getPayload } from 'payload'
 import config from '@/payload.config'
 import './styles.css'
 
+
+function isAdd(add: unknown): add is Add {
+  return typeof add === "object" && add !== null && "id" in add;
+}
+
 export default async function HomePage() {
   const payload = await getPayload({config});
   const queryResult = await payload.find({
@@ -24,18 +29,20 @@ export default async function HomePage() {
                 }}        
         >        
           {
-            adds.map(add => (
-              <a
-                href="test.html"
-                key={add.id}   
-                style={{
-                  backgroundImage: `url(${add.photo.url})`,
-                }}             
-              >
-                <h1>{add.title}</h1>
-                <h2>Kun kr. {add.price}</h2>
-              </a>
-            ))
+            adds
+              .filter(isAdd)
+              .map(add => (
+                <a
+                  href="test.html"
+                  key={add.id}
+                  style={{
+                    backgroundImage: add.photo?.url ? `url(${add.photo.url})` : "",
+                  }}
+                >
+                  <h1>{add.title}</h1>
+                  <h2>Kun kr. {add.price}</h2>
+                </a>
+              ))
           }
         </div>
       </section>
